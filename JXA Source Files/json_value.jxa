@@ -1,0 +1,74 @@
+#!/usr/bin/osascript -l JavaScript
+
+//
+// Created by Pico Mitchell (of Random Applications)
+//
+// MIT License
+//
+// Copyright (c) 2023 Pico Mitchell (Random Applications)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+// Version 2023.1.28-1
+
+// NOTE: This code is identical to the code in "json_value.sh" but with whitespace formatting.
+// This code was written with the intention of being consolidated with all whitespace formatting removed,
+// which is why a variety of decisions were made to make the code as shorter rather than more readable.
+
+// This script can be run directly, but it is recommended to instead run the code in the "json_value.sh" script since it will display errors more nicely.
+// Also, help/usage information is available within https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_value.sh
+
+"use strict"
+
+function run(argv) {
+	// @ts-ignore: JXA-ObjC
+	const stdin = $.NSFileHandle.fileHandleWithStandardInput
+
+	let out
+	for (let i = 0; i < 3; i ++) {
+		let json = (i === 0 ? argv[0] :
+			(i === 1 ? argv[argv.length - 1] :
+				// @ts-ignore: JXA-ObjC
+				$.NSString.alloc.initWithDataEncoding((stdin.respondsToSelector("readDataToEndOfFileAndReturnError:") ? stdin.readDataToEndOfFileAndReturnError(ObjC.wrap()) : stdin.readDataToEndOfFile), $.NSUTF8StringEncoding).js.replace(/\n$/, "")
+			)
+		)
+
+		// @ts-ignore: JXA-ObjC
+		if ($.NSFileManager.defaultManager.fileExistsAtPath(json)) json = $.NSString.stringWithContentsOfFileEncodingError(json, $.NSUTF8StringEncoding, ObjC.wrap()).js
+
+		if (/[{[]/.test(json))
+			try {
+				out = JSON.parse(json);
+				(i === 0 ? argv.shift() : (i === 1 && argv.pop()))
+				break
+			} catch (e) {}
+	}
+
+	if (out === undefined) throw "Failed to parse JSON."
+
+	for (let key of argv) {
+		out = (Array.isArray(out) ?
+			(/^-?\d+$/.test(key) ?
+				(key = +key, out[key < 0 ? (out.length + key) : key]) :
+				(key === "=" ? out.length : undefined)
+			) :
+			(out instanceof Object ?
+				out[key] :
+				undefined
+			)
+		)
+
+		if (out === undefined) throw "Failed to retrieve key/index: " + key
+	}
+
+	return (out instanceof Object ? JSON.stringify(out, null, 2) : out)
+}
