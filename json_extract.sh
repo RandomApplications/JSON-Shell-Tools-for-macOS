@@ -24,11 +24,12 @@
 # The following "json_extract" function is best for doing pretty advanced (or quite simple) extractions from JSON structures,
 # if all you need is very simple capabilites, check out https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_value.sh instead.
 
-json_extract() { # Version 2023.1.28-1 - Copyright (c) 2023 Pico Mitchell - MIT License - Full license and help info at https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_extract.sh
+json_extract() { # Version 2023.2.26-1 - Copyright (c) 2023 Pico Mitchell - MIT License - Full license and help info at https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_extract.sh
 	if [ "$#" -eq 0 ] && [ -t 0 ]; then
 		/usr/bin/less << JSON_EXTRACT_HELP_EOF
-json_extract: Version 2023.1.28-1
-Copyright (c) 2023 Pico Mitchell
+json_extract: Version 2023.2.26-1
+Copyright (c) 2023 Pico Mitchell - MIT License
+https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_extract.sh
 
 USAGE: json_extract [-i input (or STDIN)] [operation options] [output options]
 
@@ -158,19 +159,19 @@ JSON_EXTRACT_HELP_EOF
 		return 0
 	fi
 
-	{ set -- "$(/usr/bin/osascript -l JavaScript -e 'var run=argv=>{const args=[];let p;for(let a of argv)if(!p&&/^-[^-]/.test(a)){a=a.split("").slice(1);for(const i in a){args.push("-"+a[i]);if(/[ieE]/.test(' \
-	-e 'a[i])){a.length>+i+1?args.push(a.splice(+i+(a[+i+1]==="="?2:1)).join("")):p=1;break}}}else{args.push(a);p=0}let o,lA;for(const i in args){if(args[i]==="-i"&&!/^-[eE]$/.test(lA)){o=args.splice(+i,2)[1]' \
-	-e 'break}lA=args[i]}const fH=$.NSFileHandle,hWS="fileHandleWithStandard",rtS="respondsToSelector";if(!o||o==="-"){const rdEOF="readDataToEndOfFile",aRE="AndReturnError";const h=fH[hWS+"Input"];o=$["NSSt"' \
-	-e '+"ring"].alloc.initWithDataEncoding(h[rtS](rdEOF+aRE+":")?h[rdEOF+aRE](ObjC.wrap()):h[rdEOF],4).js.replace(/\n$/,"")}if($.NSFileManager.defaultManager.fileExistsAtPath(o))o=$.NSString["stringWithCont"' \
-	-e '+"entsOfFileEncodingError"](o,4,ObjC.wrap()).js;if(/[{[]/.test(o))o=JSON.parse(o);let e,eE,oL,o0,oT,oTS;const strOf=(O,N)=>typeof O==="object"?JSON.stringify(O,null,N):(O=O.toString(),oT&&(O=O.trim())' \
-	-e ',oTS&&(O=O.replace(/\s+/g," ")),O),ext=(O,K)=>Array.isArray(O)?/^-?\d+$/.test(K)?(K=+K,O[K<0?O.length+K:K]):void 0:O instanceof Object?O[K]:void 0,arr="array",dct="dictionary",iOp="Invalid option",naV' \
-	-e '="non-"+arr+" value";if(o||args.length){for(const a of args){const isA=Array.isArray(o);if(e){o=ext(o,a);if(o===void 0)throw(isA?"Index":"Key")+" not found in "+(isA?arr:dct)+": "+a;e=0}else if(eE){o' \
-	-e '=o.map(E=>(E=ext(E,a),E===void 0?null:E));eE=0}else if(a==="-l")oL=1;else if(a==="-0")o0=1;else if(a==="-t")oT=1;else if(a==="-T")oT=oTS=1;else{const isO=o instanceof Object;if(isO&&a==="-e")e=1;else' \
-	-e 'if(isA&&a==="-E")eE=1;else if(isA&&a==="-N")o=o.filter(E=>E!==null);else if(isO&&a==="-S")while(o instanceof Object&&Object.keys(o).length===1)o=o[Object.keys(o)[0]];else if(isA&&a==="-f"&&typeof o.' \
-	-e 'flat==="function")o=o.flat(Infinity);else if(isA&&a==="-s")o.sort((X,Y)=>strOf(X).localeCompare(strOf(Y)));else if(isA&&a==="-u")o=o.filter((E,I,A)=>A.indexOf(E)===I);else if(isO&&/^-[ckv]$/.test(a)' \
-	-e ')o=a==="-c"?Object.keys(o).length:a==="-k"?Object.keys(o):Object.values(o);else if(/^-[eSckv]$/.test(a))throw iOp+" for non-"+dct+" or "+naV+": "+a;else if(/^-[ENfsu]$/.test(a))throw iOp+" for "+naV' \
-	-e '+": "+a;else throw iOp+": "+a}}const d=o0?"\0":"\n";o=((oL||o0)&&Array.isArray(o)?o.map(E=>strOf(E)).join(d):strOf(o,2))+d}o=ObjC.wrap(o).dataUsingEncoding(4);const h=fH[hWS+"Output"],wD="writeData"' \
-	-e 'h[rtS](wD+":error:")?h[wD+"Error"](o,ObjC.wrap()):h[wD](o)}' -- "$@" 2>&1 >&3)"; } 3>&1; [ -z "$1" ] || { set -- "json_extract ERROR${1#*Error}"; >&2 printf '%s\n' "${1% *}"; false; }
+	{ set -- "$(/usr/bin/osascript -l JavaScript -e 'var run=argv=>{const args=[];let p;argv.forEach(a=>{if(!p&&/^-[^-]/.test(a)){a=a.split("").slice(1);for(const i in a){args.push("-"+a[i]);if(/[ieE]/.test(' \
+	-e 'a[i])){a.length>+i+1?args.push(a.splice(+i+(a[+i+1]==="="?2:1)).join("")):p=1;break}}}else{args.push(a);p=0}});let o,lA;for(const i in args){if(args[i]==="-i"&&!/^-[eE]$/.test(lA)){o=args.splice(+i,2' \
+	-e ')[1];break}lA=args[i]}const fH=$.NSFileHandle,hWS="fileHandleWithStandard",rtS="respondsToSelector";if(!o||o==="-"){const rdEOF="readDataToEndOfFile",aRE="AndReturnError";const h=fH[hWS+"Input"];o=$.' \
+	-e 'NSString.alloc.initWithDataEncoding(h[rtS](rdEOF+aRE+":")?h[rdEOF+aRE](ObjC.wrap()):h[rdEOF],4).js.replace(/\n$/,"")}if($.NSFileManager.defaultManager.fileExistsAtPath(o))o=$.NSString["stringWithCon"' \
+	-e '+"tentsOfFileEncodingError"](o,4,ObjC.wrap()).js;if(/[{[]/.test(o))o=JSON.parse(o);let e,eE,oL,o0,oT,oTS;const strOf=(O,N)=>typeof O==="object"?JSON.stringify(O,null,N):(O=O.toString(),oT&&(O=O.trim(' \
+	-e ')),oTS&&(O=O.replace(/\s+/g," ")),O),ext=(O,K)=>Array.isArray(O)?/^-?\d+$/.test(K)?(K=+K,O[K<0?O.length+K:K]):void 0:O instanceof Object?O[K]:void 0,ar="array",dc="dictionary",iv="Invalid option",naV' \
+	-e '="non-"+ar+" value";if(o||args.length){args.forEach(a=>{const isA=Array.isArray(o);if(e){o=ext(o,a);if(o===void 0)throw(isA?"Index":"Key")+" not found in "+(isA?ar:dc)+": "+a;e=0}else if(eE){o=o.map(' \
+	-e 'E=>(E=ext(E,a),E===void 0?null:E));eE=0}else if(a==="-l")oL=1;else if(a==="-0")o0=1;else if(a==="-t")oT=1;else if(a==="-T")oT=oTS=1;else{const isO=o instanceof Object;if(isO&&a==="-e")e=1;else if(isA' \
+	-e '&&a==="-E")eE=1;else if(isA&&a==="-N")o=o.filter(E=>E!==null);else if(isO&&a==="-S")while(o instanceof Object&&Object.keys(o).length===1)o=o[Object.keys(o)[0]];else if(isA&&a==="-f"&&typeof o.flat===' \
+	-e '"function")o=o.flat(Infinity);else if(isA&&a==="-s")o.sort((X,Y)=>strOf(X).localeCompare(strOf(Y)));else if(isA&&a==="-u")o=o.filter((E,I,A)=>A.indexOf(E)===I);else if(isO&&/^-[ckv]$/.test(a))o=a===' \
+	-e '"-c"?Object.keys(o).length:a==="-k"?Object.keys(o):Object.values(o);else if(/^-[eSckv]$/.test(a))throw iv+" for non-"+dc+" or "+naV+": "+a;else if(/^-[ENfsu]$/.test(a))throw iv+" for "+naV+": "+a' \
+	-e 'else throw iv+": "+a}});const d=o0?"\0":"\n";o=((oL||o0)&&Array.isArray(o)?o.map(E=>strOf(E)).join(d):strOf(o,2))+d}o=ObjC.wrap(o).dataUsingEncoding(4);const h=fH[hWS+"Output"],wD="writeData";h[' \
+	-e 'rtS](wD+":error:")?h[wD+"Error"](o,ObjC.wrap()):h[wD](o)}' -- "$@" 2>&1 >&3)"; } 3>&1; [ "${1##* }" != '(-2700)' ] || { set -- "json_extract ERROR${1#*Error}"; >&2 printf '%s\n' "${1% *}"; false; }
 }
 
 json_extract "$@"
@@ -185,10 +186,13 @@ json_extract "$@"
 # curl -sfL 'https://api.ipsw.me/v3/firmwares.json/condensed' | json_extract -e 'devices' -v -E 'firmwares' -E '0' -E 'url' -u -l
 
 # List the name of every currently detected Wi-Fi network:
-# system_profiler -json 'SPAirPortDataType' | json_extract -Se 'spairport_airport_interfaces' -e '0' -e 'spairport_airport_other_local_wireless_networks' -E '_name' -l
+# system_profiler -json 'SPAirPortDataType' | json_extract -Se 'spairport_airport_interfaces' -E 'spairport_airport_other_local_wireless_networks' -NfE '_name' -ul
 
 # List every SATA or NVMe drive model name:
 # system_profiler -json 'SPNVMeDataType' 'SPSerialATADataType' | json_extract -vfE '_items' -fE 'device_model' -Tl
 
-# List every account name on this system:
+# List every connected screen name:
+# system_profiler -json 'SPDisplaysDataType' | json_extract -e 'SPDisplaysDataType' -E 'spdisplays_ndrvs' -fNE '_name' -l
+
+# List every (primary) account name on this system:
 # dscl -plist . -readall /Users RecordName | plutil -convert json -o - - | json_extract -E 'dsAttrTypeStandard:RecordName' -E '0' -l

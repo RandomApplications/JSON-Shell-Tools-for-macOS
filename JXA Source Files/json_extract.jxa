@@ -18,7 +18,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Version 2023.1.28-1
+// Version 2023.2.26-1
 
 // NOTE: This code is identical to the code in "json_extract.sh" but with whitespace formatting.
 // This code was written with the intention of being consolidated with all whitespace formatting removed,
@@ -32,7 +32,7 @@
 var run = argv => {
 	const args = []
 	let p
-	for (let a of argv)
+	argv.forEach(a => {
 		if (!p && /^-[^-]/.test(a)) {
 			a = a.split("").slice(1)
 			for (const i in a) {
@@ -46,10 +46,11 @@ var run = argv => {
 			args.push(a)
 			p = 0
 		}
+	})
 
 	let o, lA
 	for (const i in args) {
-		if ((args[i] === "-i") && !/^-[eE]$/.test(lA)) {
+		if (args[i] === "-i" && !/^-[eE]$/.test(lA)) {
 			o = args.splice(+i, 2)[1]
 			break
 		}
@@ -74,14 +75,14 @@ var run = argv => {
 
 	const strOf = (O, N) => (typeof O === "object" ? JSON.stringify(O, null, N) : (O = O.toString(), (oT && (O = O.trim())), (oTS && (O = O.replace(/\s+/g, " "))), O)),
 		ext = (O, K) => (Array.isArray(O) ? (/^-?\d+$/.test(K) ? (K = +K, O[K < 0 ? (O.length + K) : K]) : void 0) : (O instanceof Object ? O[K] : void 0)),
-		arr = "array", dct = "dictionary", iOp = "Invalid option", naV = "non-" + arr + " value"
+		ar = "array", dc = "dictionary", iv = "Invalid option", naV = "non-" + ar + " value"
 
 	if (o || args.length) {
-		for (const a of args) {
+		args.forEach(a => {
 			const isA = Array.isArray(o)
 			if (e) {
 				o = ext(o, a)
-				if (o === void 0) throw (isA ? "Index" : "Key") + " not found in " + (isA ? arr : dct) + ": " + a
+				if (o === void 0) throw (isA ? "Index" : "Key") + " not found in " + (isA ? ar : dc) + ": " + a
 				e = 0
 			} else if (eE) {
 				o = o.map(E => (E = ext(E, a), (E === void 0 ? null : E)))
@@ -100,11 +101,11 @@ var run = argv => {
 				else if (isA && a === "-s") o.sort((X, Y) => strOf(X).localeCompare(strOf(Y)))
 				else if (isA && a === "-u") o = o.filter((E, I, A) => A.indexOf(E) === I)
 				else if (isO && /^-[ckv]$/.test(a)) o = (a === "-c" ? Object.keys(o).length : (a === "-k" ? Object.keys(o) : Object.values(o)))
-				else if (/^-[eSckv]$/.test(a)) throw iOp + " for non-" + dct + " or " + naV + ": " + a
-				else if (/^-[ENfsu]$/.test(a)) throw iOp + " for " + naV + ": " + a
-				else throw iOp + ": " + a
+				else if (/^-[eSckv]$/.test(a)) throw iv + " for non-" + dc + " or " + naV + ": " + a
+				else if (/^-[ENfsu]$/.test(a)) throw iv + " for " + naV + ": " + a
+				else throw iv + ": " + a
 			}
-		}
+		})
 
 		const d = (o0 ? "\0" : "\n")
 		o = (((oL || o0) && Array.isArray(o)) ? o.map(E => strOf(E)).join(d) : strOf(o, 2)) + d
