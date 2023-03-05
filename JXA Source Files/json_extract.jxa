@@ -18,16 +18,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Version 2023.2.26-1
+// Version 2023.3.4-1
 
 // NOTE: This code is identical to the code in "json_extract.sh" but with whitespace formatting.
 // This code was written with the intention of being consolidated with all whitespace formatting removed,
-// which is why a variety of decisions were made to make the code as shorter rather than more readable.
+// which is why a variety of decisions were made to make the code shorter rather than more readable.
 
 // This script can be run directly, but it is recommended to instead run the code in the "json_extract.sh" script since it will display errors more nicely.
-// Also, help/usage information is available within https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_extract.sh
+// Also, help/usage information is available within https://randomapplications.com/json_extract
 
 "use strict"
+// @ts-ignore: JXA-ObjC
+ObjC.import("unistd")
 
 var run = argv => {
 	const args = []
@@ -64,7 +66,7 @@ var run = argv => {
 		const rdEOF = "readDataToEndOfFile", aRE = "AndReturnError"
 		const h = fH[hWS + "Input"]
 		// @ts-ignore: JXA-ObjC
-		o = $.NSString.alloc.initWithDataEncoding(h[rtS](rdEOF + aRE + ":") ? h[rdEOF + aRE](ObjC.wrap()) : h[rdEOF], 4).js.replace(/\n$/, "")
+		o = ($.isatty(0) ? "" : $.NSString.alloc.initWithDataEncoding(h[rtS](rdEOF + aRE + ":") ? h[rdEOF + aRE](ObjC.wrap()) : h[rdEOF], 4).js.replace(/\n$/, ""))
 	}
 
 	// @ts-ignore: JXA-ObjC

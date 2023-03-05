@@ -18,16 +18,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Version 2023.2.26-1
+// Version 2023.3.4-1
 
 // NOTE: This code is identical to the code in "json_value.sh" but with whitespace formatting.
 // This code was written with the intention of being consolidated with all whitespace formatting removed,
-// which is why a variety of decisions were made to make the code as shorter rather than more readable.
+// which is why a variety of decisions were made to make the code shorter rather than more readable.
 
 // This script can be run directly, but it is recommended to instead run the code in the "json_value.sh" script since it will display errors more nicely.
-// Also, help/usage information is available within https://github.com/RandomApplications/JSON-Shell-Tools-for-macOS/blob/main/json_value.sh
+// Also, help/usage information is available within https://randomapplications.com/json_value
 
 "use strict"
+// @ts-ignore: JXA-ObjC
+ObjC.import("unistd")
 
 function run(argv) {
 	// @ts-ignore: JXA-ObjC
@@ -38,7 +40,10 @@ function run(argv) {
 		let json = (i === 0 ? argv[0] :
 			(i === 1 ? argv[argv.length - 1] :
 				// @ts-ignore: JXA-ObjC
-				$.NSString.alloc.initWithDataEncoding((stdin.respondsToSelector("readDataToEndOfFileAndReturnError:") ? stdin.readDataToEndOfFileAndReturnError(ObjC.wrap()) : stdin.readDataToEndOfFile), $.NSUTF8StringEncoding).js.replace(/\n$/, "")
+				($.isatty(0) ? "" :
+					// @ts-ignore: JXA-ObjC
+					$.NSString.alloc.initWithDataEncoding((stdin.respondsToSelector("readDataToEndOfFileAndReturnError:") ? stdin.readDataToEndOfFileAndReturnError(ObjC.wrap()) : stdin.readDataToEndOfFile), $.NSUTF8StringEncoding).js.replace(/\n$/, "")
+				)
 			)
 		)
 
