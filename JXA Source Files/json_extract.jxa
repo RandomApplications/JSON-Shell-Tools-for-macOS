@@ -18,7 +18,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Version 2023.3.4-1
+// Version 2023.7.24-1
 
 // NOTE: This code is identical to the code in "json_extract.sh" but with whitespace formatting.
 // This code was written with the intention of being consolidated with all whitespace formatting removed,
@@ -71,7 +71,7 @@ var run = argv => {
 
 	// @ts-ignore: JXA-ObjC
 	if ($.NSFileManager.defaultManager.fileExistsAtPath(o)) o = $.NSString.stringWithContentsOfFileEncodingError(o, 4, ObjC.wrap()).js
-	if (/[{[]/.test(o)) o = JSON.parse(o)
+	if (/^\s*[{[]/.test(o)) o = JSON.parse(o)
 
 	let e, eE, oL, o0, oT, oTS
 

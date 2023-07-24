@@ -20,12 +20,12 @@
 
 // Version 2023.7.24-1
 
-// NOTE: This code is identical to the code in "json_value.sh" but with whitespace formatting.
+// NOTE: This code is identical to the code in "json_create.sh" but with whitespace formatting.
 // This code was written with the intention of being consolidated with all whitespace formatting removed,
 // which is why a variety of decisions were made to make the code shorter rather than more readable.
 
-// This script can be run directly, but it is recommended to instead run the code in the "json_value.sh" script since it will display errors more nicely.
-// Also, help/usage information is available within https://randomapplications.com/json_value
+// This script can be run directly, but it is recommended to instead run the code in the "json_create.sh" script.
+// Also, help/usage information is available within https://randomapplications.com/json_create
 
 "use strict"
 // @ts-ignore: JXA-ObjC
@@ -33,47 +33,55 @@ ObjC.import("unistd")
 
 function run(argv) {
 	// @ts-ignore: JXA-ObjC
-	const stdin = $.NSFileHandle.fileHandleWithStandardInput
+	let stdin = $.NSFileHandle.fileHandleWithStandardInput, /** @type {object} */ out = [], dictOut = false, stdinJson = false, isValue = true, keyArg
 
-	let out
-	for (let i = 0; i < 3; i ++) {
-		let json = (i === 0 ? argv[0] :
-			(i === 1 ? argv[argv.length - 1] :
-				// @ts-ignore: JXA-ObjC
-				($.isatty(0) ? "" :
-					// @ts-ignore: JXA-ObjC
-					$.NSString.alloc.initWithDataEncoding((stdin.respondsToSelector("readDataToEndOfFileAndReturnError:") ? stdin.readDataToEndOfFileAndReturnError(ObjC.wrap()) : stdin.readDataToEndOfFile), $.NSUTF8StringEncoding).js.replace(/\n$/, "")
-				)
-			)
-		)
-
+	// @ts-ignore: JXA-ObjC
+	if (!$.isatty(0)) {
 		// @ts-ignore: JXA-ObjC
-		if ($.NSFileManager.defaultManager.fileExistsAtPath(json)) json = $.NSString.stringWithContentsOfFileEncodingError(json, $.NSUTF8StringEncoding, ObjC.wrap()).js
-
-		if (/^\s*[{[]/.test(json))
+		stdin = $.NSString.alloc.initWithDataEncoding((stdin.respondsToSelector("readDataToEndOfFileAndReturnError:") ? stdin.readDataToEndOfFileAndReturnError(ObjC.wrap()) : stdin.readDataToEndOfFile), $.NSUTF8StringEncoding).js
+		if (/^\s*[{[]/.test(stdin))
 			try {
-				out = JSON.parse(json);
-				(i === 0 ? argv.shift() : (i === 1 && argv.pop()))
-				break
+				out = JSON.parse(stdin)
+				dictOut = !Array.isArray(out)
+				stdinJson = true
 			} catch (e) {}
 	}
 
-	if (out === undefined) throw "Failed to parse JSON."
+	if (argv[0] === "-d") {
+		if (!stdinJson) {
+			out = {}
+			dictOut = true
+		}
 
-	argv.forEach(key => {
-		out = (Array.isArray(out) ?
-			(/^-?\d+$/.test(key) ?
-				(key = +key, out[key < 0 ? (out.length + key) : key]) :
-				(key === "=" ? out.length : undefined)
+		if (dictOut) argv.shift()
+		
+	}
+
+	argv.forEach((/** @type {any} */ arg, /** @type {number} */ index) => {
+		if (dictOut) isValue = ((index % 2) !== 0)
+
+		if (isValue)
+			if (/^\s*[{[]/.test(arg))
+				try { arg = JSON.parse(arg) } catch (e) {}
+			else
+				((/\d/.test(arg) && !isNaN(arg)) ? arg = +arg :
+					((arg === "true") ? arg = true :
+						((arg === "false") ? arg = false :
+							((arg === "null") && (arg = null))
+						)
+					)
+				);
+
+		(dictOut ?
+			(isValue ?
+				out[keyArg] = arg :
+				keyArg = arg
 			) :
-			(out instanceof Object ?
-				out[key] :
-				undefined
-			)
+			out.push(arg)
 		)
-
-		if (out === undefined) throw "Failed to retrieve key/index: " + key
 	})
 
-	return (out instanceof Object ? JSON.stringify(out, null, 2) : out)
+	if (dictOut && !isValue && (keyArg !== void 0)) out[keyArg] = null
+
+	return JSON.stringify(out, null, 2)
 }
